@@ -3,12 +3,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LeaveRequestFragment">
+    tools:context=".LeaveRequestFragment"
+    android:padding="20dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="this is leaveRequest" />
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       android:gravity="center">
+       
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:background="@drawable/notation_bg"
+           android:orientation="vertical"
+           android:padding="20dp">
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="vertical"
+               android:background="@drawable/bg_style_1"
+               android:padding="20dp">
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="20dp"
+                   android:text="จำนวนวันลาที่เหลืออยู่"
+                   android:gravity="center"
+                   android:textColor="#000000"/>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="20dp"
+                   android:layout_marginTop="20dp"
+                   android:orientation="horizontal"
+                   android:gravity="center"
+                   android:layout_gravity="center">
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:text="ลาประจำปี(วัน) : "
+                       android:textColor="#000000"/>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:text="12"
+                       android:id="@+id/annualLeave"
+                       android:textColor="#000000"/>
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="20dp"
+                   android:layout_marginTop="10dp"
+                   android:orientation="horizontal"
+                   android:layout_gravity="center"
+                   android:gravity="center">
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:text="ลากิจ(วัน) : "
+                       android:textColor="#000000"/>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:id="@+id/personalLeave"
+                       android:text="10"
+                       android:textColor="#000000"/>
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="20dp"
+                   android:layout_marginTop="10dp"
+                   android:orientation="horizontal"
+                   android:layout_gravity="center"
+                   android:gravity="center">
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:text="ลาป่วย(วัน) : "
+                       android:textColor="#000000"/>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:text="100"
+                       android:id="@+id/sickLeave"
+                       android:textColor="#000000"/>
+               </LinearLayout>
+
+
+           </LinearLayout>
+
+           <Button
+               android:layout_width="match_parent"
+               android:layout_height="50dp"
+               android:layout_marginTop="25dp"
+               android:background="@drawable/button_style_2"
+               android:text="ประวัติการลา"
+               android:id="@+id/leaveHistoryBtn"/>
+           <Button
+               android:layout_width="match_parent"
+               android:layout_height="50dp"
+               android:layout_marginTop="10dp"
+               android:background="@drawable/button_style_2"
+               android:text="ดูวันหยุด"
+               android:id="@+id/viewHolidaysBtn"/>
+
+       </LinearLayout>
+       
+   </LinearLayout>
 
 </FrameLayout>

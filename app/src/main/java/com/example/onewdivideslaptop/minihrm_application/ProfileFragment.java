@@ -2,6 +2,7 @@ package com.example.onewdivideslaptop.minihrm_application;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -10,13 +11,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class ProfileFragment extends Fragment {
 
     ImageView profile;
+    TextView name;
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
 
@@ -32,9 +41,15 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         profile = (ImageView) v.findViewById(R.id.profile_id);
+        name = (TextView) v.findViewById(R.id.name_id);
 
-        if (staticData.getProfilePic() != null)
+
+        if (staticData.getProfilePic() != null){
             profile.setImageURI(staticData.getProfilePic());
+        }
+
+        else if (staticData.getFirstName() != null && staticData.getLastName() != null)
+            name.setText(staticData.getFirstName()+" "+staticData.getLastName());
 
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,6 +59,7 @@ public class ProfileFragment extends Fragment {
         });
 
         return v;
+
     }
 
     private void openGallery(){
@@ -60,4 +76,5 @@ public class ProfileFragment extends Fragment {
             profile.setImageURI(imageUri);
         }
     }
+
 }

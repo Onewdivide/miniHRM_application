@@ -75,12 +75,10 @@ public class calendarFragment extends Fragment {
             @Override
             public void onDayClick(Date dateClicked) {
 
-//                Intent intent = new Intent(getActivity(),taskedInDayActivity.class);
 //                intent.putExtra("monthYear",putExtraDateFormate.format(dateClicked).toString());
 //                intent.putExtra("day",dateClicked.getDate());
 //                intent.putExtra("month",dateClicked.getMonth()+1);
 //                intent.putExtra("year",dateClicked.getYear()+1900);
-//                startActivity(intent);
 
 
                 listtask.add(new task_list_response("Project 1","eiei 1","07:00"));

@@ -3,6 +3,7 @@
     package="com.example.onewdivideslaptop.minihrm_application">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -18,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".taskedInDayActivity" />
         <activity android:name=".MainActivity"></activity>
     </application>
 

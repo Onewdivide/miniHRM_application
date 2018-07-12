@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
@@ -33,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.userforminihrm);
         tabLayout.getTabAt(1).setIcon(R.drawable.calendarforminihrm);
         tabLayout.getTabAt(2).setIcon(R.drawable.mailminihrm);
-
 
     }
 }

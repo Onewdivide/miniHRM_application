@@ -17,6 +17,24 @@
             android:src="@drawable/userforminihrm"
             android:id="@+id/profile_id"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:text="Mr. Firstname Lastname"
+                android:id="@+id/name_id"
+                android:layout_gravity="center"
+                android:gravity="center"/>
+
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </FrameLayout>
