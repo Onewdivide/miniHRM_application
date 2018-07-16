@@ -2,12 +2,13 @@ package com.example.onewdivideslaptop.minihrm_application.responseAndBody;
 
 public class loginResponse {
     int id;
-    String username,token;
+    String username,accessToken,refreshToken;
 
-    public loginResponse(int id, String username, String token) {
+    public loginResponse(int id, String username, String accessToken, String refreshToken) {
         this.id = id;
         this.username = username;
-        this.token = token;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public int getId() {
@@ -19,6 +20,10 @@ public class loginResponse {
     }
 
     public String getToken() {
-        return token;
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 }

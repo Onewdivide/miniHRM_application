@@ -78,11 +78,16 @@ public class login_Activity extends AppCompatActivity {
                     staticData.id = response.body().getId();
                     staticData.username = response.body().getUsername();
                     staticData.token = response.body().getToken();
-                    Toast.makeText(login_Activity.this,"id : "+response.body().getId()
-                            +"\n username : "+ response.body().getUsername()
-                            +"\n token : "+ response.body().getToken()
-                            , Toast.LENGTH_LONG).show();
+                    staticData.refreshToken = response.body().getRefreshToken();
+                    staticData.timeStampCompare = System.currentTimeMillis()/1000;
+                    staticData.tabIndex = 0;
+//                    Toast.makeText(login_Activity.this,"id : "+response.body().getId()
+//                            +"\n username : "+ response.body().getUsername()
+//                            +"\n token : "+ response.body().getToken()
+//                            , Toast.LENGTH_LONG).show();
 
+                    Toast.makeText(login_Activity.this,"timeStampCompare : "+staticData.timeStampCompare.toString(),Toast.LENGTH_SHORT).show();
+                    Log.e("timeStampCompare : ",staticData.timeStampCompare.toString());
                     Intent intent = new Intent(login_Activity.this,MainActivity.class);
                     startActivity(intent);
 

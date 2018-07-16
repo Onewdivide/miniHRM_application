@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,8 @@ public class calendarFragment extends Fragment {
 
     public static Retrofit retrofit = builder.build();
 
+    public Button addTaskBtn;
+
 
 
 
@@ -87,12 +90,15 @@ public class calendarFragment extends Fragment {
 
         showMonthYear = (TextView) v.findViewById(R.id.showMonthYear);
 
+        staticData.tabIndex = 0;
 
         compactCalendarView = (CompactCalendarView) v.findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
 
         showMonthYear.setText(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+
+        timeStampCompare(System.currentTimeMillis()/1000);
 
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
@@ -103,7 +109,7 @@ public class calendarFragment extends Fragment {
 //                intent.putExtra("month",dateClicked.getMonth()+1);
 //                intent.putExtra("year",dateClicked.getYear()+1900);
 
-
+                timeStampCompare(System.currentTimeMillis()/1000);
 
                 tempDate = fragmentDateFormat.format(dateClicked).toString();
 
@@ -126,6 +132,14 @@ public class calendarFragment extends Fragment {
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 recyclerView.setAdapter(taskedRecyclerViewAdapter);
 
+                addTaskBtn = (Button) dialog.findViewById(R.id.addTaskBtn);
+                addTaskBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(),addTaskActivity.class);
+                        startActivity(intent);
+                    }
+                });
 
 
             }
@@ -134,6 +148,8 @@ public class calendarFragment extends Fragment {
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 showMonthYear.setText(dateFormatForMonth.format(firstDayOfNewMonth));
                 Log.e("Debug!! : ",dateFormatForMonth.format(firstDayOfNewMonth));
+
+                timeStampCompare(System.currentTimeMillis()/1000);
 
                 getEventInMonth("Bearer "+staticData.getToken(),
                         firstDayOfNewMonth.getYear()+1900,
@@ -233,6 +249,33 @@ public class calendarFragment extends Fragment {
                 Log.e("Failure : ",t.toString());
             }
         });
+
+    }
+
+    public void timeStampCompare(Long timeStampNow){
+        if (timeStampNow - staticData.timeStampCompare >3000 ){
+            staticData.timeStampCompare = timeStampNow;
+
+            //get new token!!
+
+            miniHRMClient miniHRMClient = retrofit.create(miniHRMClient.class);
+
+            Call<loginResponse> call = miniHRMClient.newToken(staticData.refreshToken);
+
+            call.enqueue(new Callback<loginResponse>() {
+                @Override
+                public void onResponse(Call<loginResponse> call, Response<loginResponse> response) {
+                    staticData.token = response.body().getToken();
+                }
+
+                @Override
+                public void onFailure(Call<loginResponse> call, Throwable t) {
+
+                }
+            });
+
+        }
+
 
     }
 }

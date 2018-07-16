@@ -37,5 +37,8 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(R.drawable.calendarforminihrm);
         tabLayout.getTabAt(2).setIcon(R.drawable.mailminihrm);
 
+        tabLayout.setScrollPosition(staticData.tabIndex,0f,true);
+        viewPager.setCurrentItem(staticData.tabIndex);
+
     }
 }

@@ -32,4 +32,10 @@ public interface miniHRMClient {
             @Query("userId") int userId
     );
 
+    @FormUrlEncoded
+    @POST("/auth/token")
+    Call<loginResponse> newToken(
+            @Field("refreshToken") String refreshToken
+    );
+
 }

@@ -3,15 +3,32 @@ package com.example.onewdivideslaptop.minihrm_application;
 import android.net.Uri;
 
 public class staticData {
-    public static int id;
+    public static int id,tabIndex;
     public static String username,token;
     public static Uri profilePic ;
     public static String firstName,lastName;
-
+    public static Long timeStampCompare;
+    public static String refreshToken;
     public staticData(int id,String username,String token) {
         this.id = id;
         this.username = username;
         this.token = token;
+    }
+
+    public static String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public static void setRefreshToken(String refreshToken) {
+        staticData.refreshToken = refreshToken;
+    }
+
+    public static Long getTimeStampCompare() {
+        return timeStampCompare;
+    }
+
+    public static void setTimeStampCompare(Long timeStampCompare) {
+        staticData.timeStampCompare = timeStampCompare;
     }
 
     public static String getFirstName() {
