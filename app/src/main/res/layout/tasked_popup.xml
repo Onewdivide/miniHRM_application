@@ -2,15 +2,60 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:layout_height="400dp"
+    android:layout_height="500dp"
     android:layout_gravity="center"
     android:background="@drawable/popup_bg"
-    android:padding="25dp">
+    android:padding="25dp"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="250dp"
-        android:layout_height="300dp"
-        android:id="@+id/recycler_tasked"></android.support.v7.widget.RecyclerView>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="วันที่"
+            android:textColor="#ffff"
+            android:gravity="center"
+            android:id="@+id/date_id"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="20dp"
+            android:layout_width="250dp"
+            android:layout_height="300dp"
+            android:id="@+id/recycler_tasked"
+            android:background="@drawable/popup_bg"></android.support.v7.widget.RecyclerView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:background="@drawable/bg_style_2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="กดที่งานเพื่อแก้ไขหรือลบ"
+            android:gravity="left"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="เพิ่มงาน"
+                android:id="@+id/addTaskBtn"
+                android:background="@drawable/notation_bg"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

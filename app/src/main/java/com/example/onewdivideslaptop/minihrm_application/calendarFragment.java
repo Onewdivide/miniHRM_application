@@ -17,16 +17,26 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.calendarEventResponse;
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.loginResponse;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.task_list_response;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class calendarFragment extends Fragment {
@@ -34,14 +44,24 @@ public class calendarFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     CompactCalendarView compactCalendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());
-    private SimpleDateFormat putExtraDateFormate = new SimpleDateFormat("dd MMMM yyyy",Locale.getDefault());
+    private SimpleDateFormat fragmentDateFormat = new SimpleDateFormat("dd MMMM yyyy",Locale.getDefault());
     TextView showMonthYear;
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     public ArrayList<Integer> taskedDay = new ArrayList<>();
     public Dialog dialog;
+    int tempMonthToAddInCalendar;
     View view;
+    TextView dateInPopup;
+    String tempDate;
+    String[] parts;
+    public String urlencode = "application/x-www-form-urlencoded";
     private RecyclerView recyclerView;
     private List<task_list_response> listtask = new ArrayList<>();
+    private static Retrofit.Builder builder = new Retrofit.Builder()
+            .baseUrl("https://minihrm-205709.appspot.com")
+            .addConverterFactory(GsonConverterFactory.create());
+
+    public static Retrofit retrofit = builder.build();
 
 
 
@@ -57,9 +77,12 @@ public class calendarFragment extends Fragment {
 
         dialog = new Dialog(v.getContext());
 
-        taskedDay.add(12);
-        taskedDay.add(15);
-        taskedDay.add(17);
+//        taskedDay.add(12);
+//        taskedDay.add(15);
+//        taskedDay.add(15);
+//        taskedDay.add(17);
+
+
 
 
         showMonthYear = (TextView) v.findViewById(R.id.showMonthYear);
@@ -81,6 +104,9 @@ public class calendarFragment extends Fragment {
 //                intent.putExtra("year",dateClicked.getYear()+1900);
 
 
+
+                tempDate = fragmentDateFormat.format(dateClicked).toString();
+
                 listtask.add(new task_list_response("Project 1","eiei 1","07:00"));
                 listtask.add(new task_list_response("Project 2","eiei 2","08:00"));
                 listtask.add(new task_list_response("Project 3","eiei 3","09:00"));
@@ -91,6 +117,9 @@ public class calendarFragment extends Fragment {
                 dialog.setContentView(R.layout.tasked_popup);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable());
                 dialog.show();
+
+                dateInPopup = (TextView) dialog.findViewById(R.id.date_id);
+                dateInPopup.setText(tempDate);
 
                 taskedRecyclerViewAdapter taskedRecyclerViewAdapter = new taskedRecyclerViewAdapter(getContext(),listtask);
                 recyclerView = (RecyclerView) dialog.findViewById(R.id.recycler_tasked);
@@ -105,10 +134,21 @@ public class calendarFragment extends Fragment {
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 showMonthYear.setText(dateFormatForMonth.format(firstDayOfNewMonth));
                 Log.e("Debug!! : ",dateFormatForMonth.format(firstDayOfNewMonth));
+
+                getEventInMonth("Bearer "+staticData.getToken(),
+                        firstDayOfNewMonth.getYear()+1900,
+                        firstDayOfNewMonth.getMonth()+1,
+                        staticData.getId()
+                );
+
             }
         });
 
-        addDummyEvents();
+        getEventInMonth("Bearer "+staticData.getToken(),
+                compactCalendarView.getFirstDayOfCurrentMonth().getYear()+1900,
+                compactCalendarView.getFirstDayOfCurrentMonth().getMonth()+1,
+                staticData.getId()
+        );
 
         return v;
     }
@@ -116,9 +156,8 @@ public class calendarFragment extends Fragment {
 
     private void addDummyEvents() {
 
-        addEvents(compactCalendarView, Calendar.APRIL,taskedDay);
-        addEvents(compactCalendarView, Calendar.MAY,taskedDay);
-        addEvents(compactCalendarView, Calendar.JUNE,taskedDay);
+        Log.e("tempMonth",String.valueOf(tempMonthToAddInCalendar));
+        addEvents(compactCalendarView, tempMonthToAddInCalendar-1,taskedDay);
 
         // Refresh calendar to update events
         compactCalendarView.invalidate();
@@ -150,4 +189,50 @@ public class calendarFragment extends Fragment {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
+
+    private void getEventInMonth (String token,int year, int month, int userId){
+        miniHRMClient miniHRMClient = retrofit.create(miniHRMClient.class);
+
+        Call<List<calendarEventResponse>> call = miniHRMClient.viewEvent(urlencode,token,year,month,userId);
+
+//        Log.e("urlencode",urlencode);
+//        Log.e("token",token);
+        Log.e("year",String.valueOf(year));
+        Log.e("month",String.valueOf(month));
+//        Log.e("userId",String.valueOf(userId));
+
+        taskedDay.clear();
+
+        tempMonthToAddInCalendar = month;
+
+        call.enqueue(new Callback<List<calendarEventResponse>>() {
+            @Override
+            public void onResponse(Call<List<calendarEventResponse>> call, Response<List<calendarEventResponse>> response) {
+                if (response.body() == null){
+                    Log.e("add TaskedDay : ","null");
+                }else{
+                    for (int i=0; i<response.body().size(); i++){
+                        parts = response.body().get(i).getDate().split("-");
+                        if(i==0){
+                            Log.e("add TaskedDay if : ",parts[2]);
+                            taskedDay.add(Integer.parseInt(parts[2]));
+                        }else{
+                            if (!taskedDay.get(i-1).equals(parts[2])){
+                                Log.e("add TaskedDay else : ",parts[2]);
+                                taskedDay.add(Integer.parseInt(parts[2]));
+                            }
+                        }
+
+                    }
+                    addDummyEvents();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<calendarEventResponse>> call, Throwable t) {
+                Log.e("Failure : ",t.toString());
+            }
+        });
+
+    }
 }
