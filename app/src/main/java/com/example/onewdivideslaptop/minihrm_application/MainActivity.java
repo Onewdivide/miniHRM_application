@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.getProjectsResponse;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.loginResponse;
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.remainLeaveDayResponse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -60,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Add Fragment
         viewPagerAdapter.addFragment(new ProfileFragment(),"Profile");
-        viewPagerAdapter.addFragment(new calendarFragment(),"Calendar");
-        viewPagerAdapter.addFragment(new LeaveRequestFragment(),"Leave");
+        viewPagerAdapter.addFragment(new calendarFragment(),"Timesheet");
+        viewPagerAdapter.addFragment(new LeaveRequestFragment(),"Leave Request");
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -107,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,"import projects description fail",Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
 
     }
 

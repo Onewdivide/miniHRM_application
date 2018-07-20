@@ -5,6 +5,7 @@ import com.example.onewdivideslaptop.minihrm_application.responseAndBody.calenda
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.deleteRequestBody;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.getProjectsResponse;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.loginResponse;
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.remainLeaveDayResponse;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.taskDescriptionInRequest;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.timesheetAddRequest;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.timesheetEditRequest;
@@ -76,6 +77,14 @@ public interface miniHRMClient {
             @Header("Content-Type") String form,
             @Header("Authorization") String token,
             @Body deleteRequestBody deleteRequestBody
+    );
+
+    @GET("/api/leave-history")
+    Call<remainLeaveDayResponse> getRemainLeaveDay(
+            @Header("Content-Type") String form,
+            @Header("Authorization") String token,
+            @Query("year") int year,
+            @Query("userId") int userId
     );
 
 }

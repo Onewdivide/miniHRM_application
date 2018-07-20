@@ -42,12 +42,12 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="annual leave (days) : "
+                       android:text="Annual leave (days) : "
                        android:textColor="#000000"/>
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="12"
+                       android:text="null"
                        android:id="@+id/annualLeave"
                        android:textColor="#000000"/>
                </LinearLayout>
@@ -62,13 +62,13 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="personal leave (days) : "
+                       android:text="Personal leave (days) : "
                        android:textColor="#000000"/>
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
                        android:id="@+id/personalLeave"
-                       android:text="10"
+                       android:text="null"
                        android:textColor="#000000"/>
                </LinearLayout>
 
@@ -82,13 +82,33 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="sick leave (days) : "
+                       android:text="Sick leave (days) : "
                        android:textColor="#000000"/>
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="100"
+                       android:text="null"
                        android:id="@+id/sickLeave"
+                       android:textColor="#000000"/>
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="20dp"
+                   android:layout_marginTop="10dp"
+                   android:orientation="horizontal"
+                   android:layout_gravity="center"
+                   android:gravity="center">
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:text="Ordination leave (days) : "
+                       android:textColor="#000000"/>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent"
+                       android:text="null"
+                       android:id="@+id/ordinationLeave"
                        android:textColor="#000000"/>
                </LinearLayout>
 
@@ -98,7 +118,7 @@
            <Button
                android:layout_width="match_parent"
                android:layout_height="50dp"
-               android:layout_marginTop="25dp"
+               android:layout_marginTop="20dp"
                android:background="@drawable/button_style_2"
                android:text="leave history"
                android:id="@+id/leaveHistoryBtn"/>
@@ -107,8 +127,15 @@
                android:layout_height="50dp"
                android:layout_marginTop="10dp"
                android:background="@drawable/button_style_2"
-               android:text="view holiday"
-               android:id="@+id/viewHolidaysBtn"/>
+               android:text="leave request"
+               android:id="@+id/leaveRequestBtn"/>-
+           <Button
+               android:layout_width="match_parent"
+               android:layout_height="50dp"
+               android:layout_marginTop="10dp"
+               android:background="@drawable/button_style_2"
+               android:text="view holidays"
+               android:id="@+id/viewHolidaysBtn"/>-
 
        </LinearLayout>
        

@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".addTaskActivity" />
-        <activity android:name=".editOrDeleteTaskActivity"></activity>
+        <activity android:name=".editOrDeleteTaskActivity" />
+        <activity android:name=".leaveRequestActivity"></activity>
     </application>
 
 </manifest>
