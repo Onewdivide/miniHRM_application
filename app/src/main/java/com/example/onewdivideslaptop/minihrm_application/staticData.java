@@ -2,6 +2,11 @@ package com.example.onewdivideslaptop.minihrm_application;
 
 import android.net.Uri;
 
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.getProjectsResponse;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class staticData {
     public static int id,tabIndex;
     public static String username,token;
@@ -9,10 +14,20 @@ public class staticData {
     public static String firstName,lastName;
     public static Long timeStampCompare;
     public static String refreshToken;
+    public static List<getProjectsResponse> projectsResponses = new ArrayList<>();
+
     public staticData(int id,String username,String token) {
         this.id = id;
         this.username = username;
         this.token = token;
+    }
+
+    public static List<getProjectsResponse> getProjectsResponses() {
+        return projectsResponses;
+    }
+
+    public static void setProjectsResponses(List<getProjectsResponse> projectsResponses) {
+        staticData.projectsResponses = projectsResponses;
     }
 
     public static String getRefreshToken() {

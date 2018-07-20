@@ -29,7 +29,7 @@
                <TextView
                    android:layout_width="match_parent"
                    android:layout_height="20dp"
-                   android:text="จำนวนวันลาที่เหลืออยู่"
+                   android:text="Remain Leave day"
                    android:gravity="center"
                    android:textColor="#000000"/>
                <LinearLayout
@@ -42,7 +42,7 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="ลาประจำปี(วัน) : "
+                       android:text="annual leave (days) : "
                        android:textColor="#000000"/>
                    <TextView
                        android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="ลากิจ(วัน) : "
+                       android:text="personal leave (days) : "
                        android:textColor="#000000"/>
                    <TextView
                        android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="ลาป่วย(วัน) : "
+                       android:text="sick leave (days) : "
                        android:textColor="#000000"/>
                    <TextView
                        android:layout_width="wrap_content"
@@ -100,14 +100,14 @@
                android:layout_height="50dp"
                android:layout_marginTop="25dp"
                android:background="@drawable/button_style_2"
-               android:text="ประวัติการลา"
+               android:text="leave history"
                android:id="@+id/leaveHistoryBtn"/>
            <Button
                android:layout_width="match_parent"
                android:layout_height="50dp"
                android:layout_marginTop="10dp"
                android:background="@drawable/button_style_2"
-               android:text="ดูวันหยุด"
+               android:text="view holiday"
                android:id="@+id/viewHolidaysBtn"/>
 
        </LinearLayout>

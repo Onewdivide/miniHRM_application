@@ -15,21 +15,17 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.onewdivideslaptop.minihrm_application.responseAndBody.addTaskResponse;
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.deleteRequestBody;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.taskDescriptionInRequest;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.timesheetAddRequest;
-import com.example.onewdivideslaptop.minihrm_application.staticData;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.timesheetEditRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -41,15 +37,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-
-public class addTaskActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
+public class editOrDeleteTaskActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
 
     public Spinner projectIdSpinner,taskSpinner;
     public List<String> projectIdList = new ArrayList<>();
     public List<String> taskList = new ArrayList<>();
-    public Button chooseTimeIn,chooseTimeOut,addTaskBtn;
+    public Button chooseTimeIn,chooseTimeOut,changeTaskBtn,deleteTaskBtn;
     public TextView timeIn,timeOut,username,date;
-    public String checkWhereChangeTime;
+    public String checkWhereChangeTime,taskIdFromLastActivity;
     public EditText taskDescription;
     private static Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl("https://minihrm-205709.appspot.com/")
@@ -58,12 +53,15 @@ public class addTaskActivity extends AppCompatActivity implements TimePickerDial
     public static Retrofit retrofit = builder.build();
     public String urlencode = "application/x-www-form-urlencoded";
     public taskDescriptionInRequest taskDescriptionInRequest1;
-    public timesheetAddRequest timesheetAddRequest1;
+    public timesheetEditRequest timesheetEditRequest1;
+    public deleteRequestBody deleteRequestBody1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_task);
+        setContentView(R.layout.activity_edit_or_delete_task);
+
+        taskIdFromLastActivity = getIntent().getStringExtra("taskId");
 
         staticData.tabIndex = 1;
 
@@ -87,20 +85,48 @@ public class addTaskActivity extends AppCompatActivity implements TimePickerDial
         username = (TextView) findViewById(R.id.userId);
         date = (TextView) findViewById(R.id.date);
 
-        username.setText(String.valueOf(staticData.id));
-        date.setText(getIntent().getStringExtra("dateCompare"));
+        username.setText("10000");
+        date.setText(getIntent().getStringExtra("date"));
+
+        int projectIdPosition = projectIdList.indexOf(getIntent().getStringExtra("projectName")+"\n");
+        Log.e("containProjectId",String.valueOf(projectIdList.contains("PS170056\n")));
+        Log.e("projectIdPosition",String.valueOf(projectIdPosition));
 
         projectIdSpinner = (Spinner) findViewById(R.id.projectIdSpinner);
-        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(addTaskActivity.this,
+        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(editOrDeleteTaskActivity.this,
                 android.R.layout.simple_list_item_1,projectIdList);
         myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         projectIdSpinner.setAdapter(myAdapter);
+        projectIdSpinner.setSelection(projectIdPosition);
+
+
+        int taskIdPosition = taskList.indexOf(getIntent().getStringExtra("taskDescription"));
 
         taskSpinner = (Spinner) findViewById(R.id.taskSpinner);
-        ArrayAdapter<String> taskSpinnerAdapter = new ArrayAdapter<String>(addTaskActivity.this,
+        ArrayAdapter<String> taskSpinnerAdapter = new ArrayAdapter<String>(editOrDeleteTaskActivity.this,
                 android.R.layout.simple_list_item_1,taskList);
         taskSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         taskSpinner.setAdapter(taskSpinnerAdapter);
+        taskSpinner.setSelection(taskIdPosition);
+
+        String[] forSetTime = getIntent().getStringExtra("time").split("-");
+        String forSetTimeIn =
+                String.valueOf(forSetTime[0].charAt(0))+
+                        String.valueOf(forSetTime[0].charAt(1))+
+                                String.valueOf(forSetTime[0].charAt(2))+
+                                        String.valueOf(forSetTime[0].charAt(3))+
+                                                String.valueOf(forSetTime[0].charAt(4));
+
+        String forSetTimeOut =
+                String.valueOf(forSetTime[1].charAt(1))+
+                        String.valueOf(forSetTime[1].charAt(2))+
+                            String.valueOf(forSetTime[1].charAt(3))+
+                                String.valueOf(forSetTime[1].charAt(4))+
+                                    String.valueOf(forSetTime[1].charAt(5));
+
+
+        timeIn.setText(forSetTimeIn);
+        timeOut.setText(forSetTimeOut);
 
         chooseTimeIn = (Button) findViewById(R.id.chooseTimeIn);
         chooseTimeIn.setOnClickListener(new View.OnClickListener() {
@@ -125,16 +151,18 @@ public class addTaskActivity extends AppCompatActivity implements TimePickerDial
             }
         });
 
+        taskDescription.setText(getIntent().getStringExtra("description"));
+
 //        Log.e("timeStampInAddTask : ",staticData.timeStampCompare.toString());
 
-        addTaskBtn = (Button) findViewById(R.id.addTaskBtn);
-        addTaskBtn.setOnClickListener(new View.OnClickListener() {
+        changeTaskBtn = (Button) findViewById(R.id.editTaskBtn);
+        changeTaskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 miniHRMClient miniHRMClient = retrofit.create(miniHRMClient.class);
                 String tempToken = "Bearer "+staticData.token;
 
-                timesheetAddRequest1 = new timesheetAddRequest();
+
                 String tempProjectSpinner = "";
 
                 Log.e("length",String.valueOf(projectIdSpinner.getSelectedItem().toString().length()));
@@ -150,44 +178,71 @@ public class addTaskActivity extends AppCompatActivity implements TimePickerDial
                 if (taskDescription.getText().toString().length() == 0)
                     taskDescription.setText(" ");
 
-                timesheetAddRequest1.add(
-                        staticData.id,
+                timesheetEditRequest1 = new timesheetEditRequest(staticData.id,
                         date.getText().toString(),
                         tempProjectSpinner,
                         timeIn.getText().toString(),
                         timeOut.getText().toString(),
                         taskSpinner.getSelectedItem().toString(),
-                        taskDescription.getText().toString());
+                        taskDescription.getText().toString(),
+                        Integer.parseInt(taskIdFromLastActivity));
 
 
-
-
-                Call<List<addTaskResponse>> call = miniHRMClient.addTaskTocalendar
+                Call<Void> call = miniHRMClient.editTask
                         (       "application/json",
                                 tempToken,
-                                timesheetAddRequest1
-                                );
+                                timesheetEditRequest1
+                        );
 
-                call.enqueue(new Callback<List<addTaskResponse>>() {
+                call.enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<List<addTaskResponse>> call, Response<List<addTaskResponse>> response) {
-                        Toast.makeText(addTaskActivity.this,response.body().get(response.body().size()-1).toString(),Toast.LENGTH_LONG).show();
-                        Log.e("Response",response.body().get(response.body().size()-1).toString());
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Toast.makeText(editOrDeleteTaskActivity.this,"Success",Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onFailure(Call<List<addTaskResponse>> call, Throwable t) {
-                        Toast.makeText(addTaskActivity.this,"Fail",Toast.LENGTH_LONG);
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(editOrDeleteTaskActivity.this,"add Task fail",Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                Intent intent = new Intent(addTaskActivity.this, MainActivity.class);
+                Intent intent = new Intent(editOrDeleteTaskActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
 
+        deleteTaskBtn = (Button) findViewById(R.id.deleteTaskBtn);
+        deleteTaskBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                miniHRMClient miniHRMClient = retrofit.create(miniHRMClient.class);
+                String tempToken = "Bearer "+staticData.token;
 
+                deleteRequestBody1 = new deleteRequestBody(Integer.parseInt(taskIdFromLastActivity));
+
+                Call<Void> call = miniHRMClient.deleteTask(
+                        "application/json",
+                        tempToken,
+                        deleteRequestBody1
+                );
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Toast.makeText(editOrDeleteTaskActivity.this,"delete success",Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(editOrDeleteTaskActivity.this,"delete fail",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                Intent intent = new Intent(editOrDeleteTaskActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -248,4 +303,5 @@ public class addTaskActivity extends AppCompatActivity implements TimePickerDial
         }
 
     }
+
 }

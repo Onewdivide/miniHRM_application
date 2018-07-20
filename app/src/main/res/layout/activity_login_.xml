@@ -49,7 +49,7 @@
             android:layout_gravity="center"
             android:textColor="#000000"
             android:background="@drawable/button_style_1"
-            android:text="Submit" />
+            android:text="Log-in" />
 
         <ImageView
             android:layout_width="250dp"

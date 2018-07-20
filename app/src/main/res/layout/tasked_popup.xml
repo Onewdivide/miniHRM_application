@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="วันที่"
+            android:text="date"
             android:textColor="#ffff"
             android:gravity="center"
             android:id="@+id/date_id"/>
@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="กดที่งานเพื่อแก้ไขหรือลบ"
+            android:text="click at task for edit or delete"
             android:gravity="left"/>
 
             <Button
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
-                android:text="เพิ่มงาน"
+                android:text="new task"
                 android:id="@+id/addTaskBtn"
                 android:background="@drawable/notation_bg"/>
 

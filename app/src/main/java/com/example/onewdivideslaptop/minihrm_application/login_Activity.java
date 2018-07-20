@@ -11,6 +11,11 @@ import android.widget.Toast;
 
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.loginResponse;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +45,9 @@ public class login_Activity extends AppCompatActivity {
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
         submitBtn = (Button) findViewById(R.id.submitBtn);
+
+        username.setText("admin");
+        password.setText("playtorium");
 
         getUsername = username.getText().toString();
         getPassword = password.getText().toString();
@@ -75,19 +83,39 @@ public class login_Activity extends AppCompatActivity {
                     Log.e("debug!!!! : ",""+response.body().getId());
                     Log.e("debug!!!! : ",response.body().getUsername());
                     Log.e("debug!!!! : ",response.body().getToken());
-                    staticData.id = response.body().getId();
-                    staticData.username = response.body().getUsername();
-                    staticData.token = response.body().getToken();
-                    staticData.refreshToken = response.body().getRefreshToken();
-                    staticData.timeStampCompare = System.currentTimeMillis()/1000;
+//                    staticData.id = response.body().getId();
+//                    staticData.username = response.body().getUsername();
+//                    staticData.token = response.body().getToken();
+//                    staticData.refreshToken = response.body().getRefreshToken();
+//                    staticData.timeStampCompare = System.currentTimeMillis()/1000;
                     staticData.tabIndex = 0;
+
+                    try {
+                        FileOutputStream writeUserId = openFileOutput("userId",MODE_PRIVATE);
+                        FileOutputStream writeUsername = openFileOutput("username",MODE_PRIVATE);
+                        FileOutputStream writeToken = openFileOutput("token",MODE_PRIVATE);
+                        FileOutputStream writeRefreshToken = openFileOutput("refreshToken",MODE_PRIVATE);
+                        FileOutputStream writeTimeStampCompare = openFileOutput("timeStampCompare",MODE_PRIVATE);
+
+
+                        writeUserId.write(String.valueOf(response.body().getId()).getBytes());
+                        writeUsername.write(response.body().getUsername().getBytes());
+                        writeToken.write(response.body().getToken().getBytes());
+                        writeRefreshToken.write(response.body().getRefreshToken().getBytes());
+                        writeTimeStampCompare.write(String.valueOf(System.currentTimeMillis()/1000).getBytes());
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 //                    Toast.makeText(login_Activity.this,"id : "+response.body().getId()
 //                            +"\n username : "+ response.body().getUsername()
 //                            +"\n token : "+ response.body().getToken()
 //                            , Toast.LENGTH_LONG).show();
 
-                    Toast.makeText(login_Activity.this,"timeStampCompare : "+staticData.timeStampCompare.toString(),Toast.LENGTH_SHORT).show();
-                    Log.e("timeStampCompare : ",staticData.timeStampCompare.toString());
+//                    Toast.makeText(login_Activity.this,"timeStampCompare : "+staticData.timeStampCompare.toString(),Toast.LENGTH_SHORT).show();
+//                    Log.e("timeStampCompare : ",staticData.timeStampCompare.toString());
                     Intent intent = new Intent(login_Activity.this,MainActivity.class);
                     startActivity(intent);
 
@@ -107,4 +135,9 @@ public class login_Activity extends AppCompatActivity {
             }
         });
     }
+
+//    public void writeMessage(){
+//        FileOutputStream fileOutputStream = openFileOutput()
+//    }
+
 }

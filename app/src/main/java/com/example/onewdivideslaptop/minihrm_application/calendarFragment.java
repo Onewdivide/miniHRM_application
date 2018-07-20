@@ -19,17 +19,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.calendarEventResponse;
+import com.example.onewdivideslaptop.minihrm_application.responseAndBody.getProjectsResponse;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.loginResponse;
 import com.example.onewdivideslaptop.minihrm_application.responseAndBody.task_list_response;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,13 +44,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class calendarFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     CompactCalendarView compactCalendarView;
-    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());
+    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMMM - yyyy", Locale.ENGLISH);
     private SimpleDateFormat fragmentDateFormat = new SimpleDateFormat("dd MMMM yyyy",Locale.getDefault());
+    private SimpleDateFormat compareInTaskList = new SimpleDateFormat("yyyy-MMMM-dd",Locale.getDefault());
     TextView showMonthYear;
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     public ArrayList<Integer> taskedDay = new ArrayList<>();
@@ -53,17 +61,17 @@ public class calendarFragment extends Fragment {
     int tempMonthToAddInCalendar;
     View view;
     TextView dateInPopup;
-    String tempDate;
+    String tempDate,dateCompare,tempMonth,tempDay;
     String[] parts;
     public String urlencode = "application/x-www-form-urlencoded";
     private RecyclerView recyclerView;
     private List<task_list_response> listtask = new ArrayList<>();
     private static Retrofit.Builder builder = new Retrofit.Builder()
-            .baseUrl("https://minihrm-205709.appspot.com")
+            .baseUrl("https://minihrm-205709.appspot.com/")
             .addConverterFactory(GsonConverterFactory.create());
 
     public static Retrofit retrofit = builder.build();
-
+    public static List<calendarEventResponse> tempMonthTask = new ArrayList<>();
     public Button addTaskBtn;
 
 
@@ -77,6 +85,7 @@ public class calendarFragment extends Fragment {
 
         View v =  inflater.inflate(R.layout.fragment_calendar, container, false);
 
+//        Log.e("userId",staticData.username);
 
         dialog = new Dialog(v.getContext());
 
@@ -98,7 +107,7 @@ public class calendarFragment extends Fragment {
 
         showMonthYear.setText(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
 
-        timeStampCompare(System.currentTimeMillis()/1000);
+//        timeStampCompare(System.currentTimeMillis()/1000);
 
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
@@ -109,16 +118,47 @@ public class calendarFragment extends Fragment {
 //                intent.putExtra("month",dateClicked.getMonth()+1);
 //                intent.putExtra("year",dateClicked.getYear()+1900);
 
-                timeStampCompare(System.currentTimeMillis()/1000);
+//                timeStampCompare(System.currentTimeMillis()/1000);
+
+                if (listtask.size() != 0)
+                    listtask.clear();
+
+                if (dateClicked.getMonth()+1<10)
+                    tempMonth = "0"+String.valueOf(dateClicked.getMonth()+1);
+                else
+                    tempMonth = String.valueOf(dateClicked.getMonth()+1);
+                if (dateClicked.getDate()<10)
+                    tempDay = "0"+String.valueOf(dateClicked.getDate());
+                else
+                    tempDay = String.valueOf(dateClicked.getDate());
 
                 tempDate = fragmentDateFormat.format(dateClicked).toString();
+                dateCompare = String.valueOf(dateClicked.getYear()+1900)
+                        +"-"+tempMonth
+                        +"-"+tempDay;
 
-                listtask.add(new task_list_response("Project 1","eiei 1","07:00"));
-                listtask.add(new task_list_response("Project 2","eiei 2","08:00"));
-                listtask.add(new task_list_response("Project 3","eiei 3","09:00"));
-                listtask.add(new task_list_response("Project 4","eiei 4","07:00"));
-                listtask.add(new task_list_response("Project 5","eiei 5","08:00"));
-                listtask.add(new task_list_response("Project 6","eiei 6","09:00"));
+                Log.e("dateCompare",dateCompare);
+
+                for (int i=0; i< tempMonthTask.size(); i++){
+                    if (tempMonthTask.get(i).getDate().equals(dateCompare)){
+                        listtask.add(new task_list_response(
+                                tempMonthTask.get(i).getProjectId(),
+                                tempMonthTask.get(i).getTask(),
+                                tempMonthTask.get(i).getTimeIn()+" - "+tempMonthTask.get(i).getTimeOut(),
+                                tempMonthTask.get(i).getId(),
+                                tempMonthTask.get(i).getName(),
+                                tempMonthTask.get(i).getDate(),
+                                tempMonthTask.get(i).getDescription()
+                        ));
+                    }
+                }
+
+//                listtask.add(new task_list_response("Project 1","eiei 1","07:00"));
+//                listtask.add(new task_list_response("Project 2","eiei 2","08:00"));
+//                listtask.add(new task_list_response("Project 3","eiei 3","09:00"));
+//                listtask.add(new task_list_response("Project 4","eiei 4","07:00"));
+//                listtask.add(new task_list_response("Project 5","eiei 5","08:00"));
+//                listtask.add(new task_list_response("Project 6","eiei 6","09:00"));
 
                 dialog.setContentView(R.layout.tasked_popup);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable());
@@ -137,6 +177,7 @@ public class calendarFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getContext(),addTaskActivity.class);
+                        intent.putExtra("dateCompare",dateCompare);
                         startActivity(intent);
                     }
                 });
@@ -148,14 +189,22 @@ public class calendarFragment extends Fragment {
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 showMonthYear.setText(dateFormatForMonth.format(firstDayOfNewMonth));
                 Log.e("Debug!! : ",dateFormatForMonth.format(firstDayOfNewMonth));
+                List<String> checkPast = new ArrayList<>();
 
-                timeStampCompare(System.currentTimeMillis()/1000);
+                if (!checkPast.contains(String.valueOf(firstDayOfNewMonth.getYear()+1900)+" "+String.valueOf(firstDayOfNewMonth.getMonth()+1))){
+                    checkPast.add(String.valueOf(firstDayOfNewMonth.getYear()+1900)+" "+String.valueOf(firstDayOfNewMonth.getMonth()+1));
+                    getEventInMonth("Bearer "+staticData.getToken(),
+                            firstDayOfNewMonth.getYear()+1900,
+                            firstDayOfNewMonth.getMonth()+1,
+                            staticData.getId()
+                    );
+                    Log.e("checkPast",checkPast.toString());
 
-                getEventInMonth("Bearer "+staticData.getToken(),
-                        firstDayOfNewMonth.getYear()+1900,
-                        firstDayOfNewMonth.getMonth()+1,
-                        staticData.getId()
-                );
+                }
+
+
+
+
 
             }
         });
@@ -198,6 +247,8 @@ public class calendarFragment extends Fragment {
 
 
 
+
+
     private void setToMidnight(Calendar calendar) {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -227,6 +278,10 @@ public class calendarFragment extends Fragment {
                 if (response.body() == null){
                     Log.e("add TaskedDay : ","null");
                 }else{
+                    taskedDay.clear();
+                    Log.e("taskedDay",taskedDay.toString());
+                    tempMonthTask = response.body();
+
                     for (int i=0; i<response.body().size(); i++){
                         parts = response.body().get(i).getDate().split("-");
                         if(i==0){
@@ -240,7 +295,8 @@ public class calendarFragment extends Fragment {
                         }
 
                     }
-                    addDummyEvents();
+                    if (taskedDay.size()>0)
+                        addDummyEvents();
                 }
             }
 
@@ -249,33 +305,6 @@ public class calendarFragment extends Fragment {
                 Log.e("Failure : ",t.toString());
             }
         });
-
-    }
-
-    public void timeStampCompare(Long timeStampNow){
-        if (timeStampNow - staticData.timeStampCompare >3000 ){
-            staticData.timeStampCompare = timeStampNow;
-
-            //get new token!!
-
-            miniHRMClient miniHRMClient = retrofit.create(miniHRMClient.class);
-
-            Call<loginResponse> call = miniHRMClient.newToken(staticData.refreshToken);
-
-            call.enqueue(new Callback<loginResponse>() {
-                @Override
-                public void onResponse(Call<loginResponse> call, Response<loginResponse> response) {
-                    staticData.token = response.body().getToken();
-                }
-
-                @Override
-                public void onFailure(Call<loginResponse> call, Throwable t) {
-
-                }
-            });
-
-        }
-
 
     }
 }
